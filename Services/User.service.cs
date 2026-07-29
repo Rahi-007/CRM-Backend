@@ -38,11 +38,11 @@ public class UserService : IUserService
 
     public async Task<UserResDto?> GetUserById(Guid userId)
     {
-        User? category = await _appDbContext.Users
+        User? user = await _appDbContext.Users
             .Include(u => u.Team)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-        return category == null ? null : _mapper.Map<UserResDto>(category);
+        return user == null ? null : _mapper.Map<UserResDto>(user);
     }
 
     public async Task<UserResDto> CreateUser(CreateUserDto createData)
@@ -58,6 +58,30 @@ public class UserService : IUserService
         await _appDbContext.Users.AddAsync(newUser);
         await _appDbContext.SaveChangesAsync();
         return _mapper.Map<UserResDto>(newUser);
+    }
+
+    public async Task<bool> UpdateUser(Guid userId, UpdateUserDto updateData)
+    {
+        User? user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+        if (user == null) return false;
+        if (!string.IsNullOrWhiteSpace(updateData.Phone))
+        {
+            bool phoneExists = await _appDbContext.Users
+                .AnyAsync(u =>
+                    u.Phone == updateData.Phone &&
+                    u.Id != userId);
+
+            if (phoneExists)
+                throw new Exception("Phone number already exists.");
+        }
+
+        _mapper.Map(updateData, user);
+        user.UpdatedById = _currentUser.UserId;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _appDbContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> DeleteUser(Guid userId)

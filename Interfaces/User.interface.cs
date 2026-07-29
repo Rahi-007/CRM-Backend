@@ -4,6 +4,6 @@ public interface IUserService
     Task<List<SelectUserRes>> SelectUsers();
     Task<UserResDto?> GetUserById(Guid userId);
     Task<UserResDto> CreateUser(CreateUserDto createData);
-    // Task<bool> UpdateCategory(Guid categoryId, UpdateCategoryDto updateData);
+    Task<bool> UpdateUser(Guid userId, UpdateUserDto updateData);
     Task<bool> DeleteUser(Guid userId);
 }

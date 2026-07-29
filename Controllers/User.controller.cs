@@ -44,6 +44,26 @@ public class UserController : ControllerBase
         return Created($"/api/v1/user/{newUser.Id}", newUser);
     }
 
+    // Update: api/v1/user/{userId} => Update a user
+    [HttpPut("{userId:guid}")]
+    public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UpdateUserDto userData)
+    {
+        bool result = await _userService.UpdateUser(userId, userData);
+
+        if (!result)
+            return NotFound(new
+            {
+                success = false,
+                message = "User not found"
+            });
+
+        return Ok(new
+        {
+            success = true,
+            message = "User updated successfully"
+        });
+    }
+
     // Delete: api/v1/user/{userId} => Delete a user
     [HttpDelete("{userId:guid}")]
     public async Task<IActionResult> DeleteUser(Guid userId)

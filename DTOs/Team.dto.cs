@@ -5,13 +5,6 @@ public class CreateTeamDto
     public Guid TeamLeaderId { get; set; }
 };
 
-public class UpdateTeamDto
-{
-    public string? Name { get; set; }
-    public string? Narration { get; set; } = string.Empty;
-    public Guid? TeamLeaderId { get; set; }
-};
-
 public class TeamResDto
 {
     public int Id { get; set; }

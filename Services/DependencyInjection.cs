@@ -10,6 +10,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITeamService, TeamService>();
+        services.AddScoped<IClientService, ClientService>();
         services.AddAutoMapper(typeof(Program));
         services.AddProblemDetails();
 

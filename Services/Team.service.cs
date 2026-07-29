@@ -49,6 +49,15 @@ public class TeamService : ITeamService
             .ToListAsync();
     }
 
+    public async Task<TeamResDto?> GetTeamById(int id)
+    {
+        Team? team = await _appDbContext.Teams
+            .Include(u => u.TeamLeader)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        return team == null ? null : _mapper.Map<TeamResDto>(team);
+    }
+
     public async Task<int> CreateTeam(CreateTeamDto createData)
     {
         Team? existTeam = await _appDbContext.Teams.FirstOrDefaultAsync(t => t.Name == createData.Name);
@@ -71,5 +80,42 @@ public class TeamService : ITeamService
         await _appDbContext.SaveChangesAsync();
 
         return newTeam.Id;
+    }
+
+    public async Task<bool> UpdateTeam(int id, CreateTeamDto updateData)
+    {
+        Team? team = await _appDbContext.Teams.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (team == null) return false;
+        if (!string.IsNullOrWhiteSpace(updateData.Name))
+        {
+            bool nameExists = await _appDbContext.Teams
+                .AnyAsync(u =>
+                    u.Name == updateData.Name &&
+                    u.Id != id);
+
+            if (nameExists)
+                throw new Exception("Name already exists.");
+        }
+
+        _mapper.Map(updateData, team);
+        team.UpdatedById = _currentUser.UserId;
+        team.UpdatedAt = DateTime.UtcNow;
+
+        await _appDbContext.SaveChangesAsync();
+        return true;
+    }
+
+
+    public async Task<bool> DeleteTeam(int id)
+    {
+        Team? team = await _appDbContext.Teams.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (team == null) return false;
+
+        _appDbContext.Teams.Remove(team);
+        await _appDbContext.SaveChangesAsync();
+
+        return true;
     }
 }
