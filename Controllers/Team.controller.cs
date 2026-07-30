@@ -14,10 +14,18 @@ public class TeamController : ControllerBase
 
     // Get: api/v1/team => Read all teams
     [HttpGet]
-    public async Task<IActionResult> LoadUsers(string? search)
+    public async Task<IActionResult> LoadUsers()
     {
-        List<TeamResDto> response = await _teamService.GetAllTeams(search);
+        List<TeamResDto> response = await _teamService.GetAllTeams();
         return Ok(response);
+    }
+
+    // Get: api/v1/team/{teamId} => Read a user
+    [HttpGet("{teamId:int}")]
+    public async Task<IActionResult> GetTeam(int teamId)
+    {
+        TeamResDto? response = await _teamService.GetTeamById(teamId);
+        return response == null ? NotFound("Team not found!") : Ok(response);
     }
 
     // Get: api/v1/team/select => Select teams
@@ -34,5 +42,33 @@ public class TeamController : ControllerBase
     {
         int teamId = await _teamService.CreateTeam(teamData);
         return Created($"/api/v1/user/{teamId}", teamId);
+    }
+
+    // Update: api/v1/team/{teamId} => Update a Team
+    [HttpPut("{teamId:int}")]
+    public async Task<IActionResult> UpdateTeam(int teamId, [FromBody] CreateTeamDto teamData)
+    {
+        bool result = await _teamService.UpdateTeam(teamId, teamData);
+
+        if (!result)
+            return NotFound(new
+            {
+                success = false,
+                message = "Team not found"
+            });
+
+        return Ok(new
+        {
+            success = true,
+            message = "Team updated successfully"
+        });
+    }
+
+    // Delete: api/v1/team/{teamId} => Delete a team
+    [HttpDelete("{teamId:int}")]
+    public async Task<IActionResult> DeleteTeam(int teamId)
+    {
+        bool response = await _teamService.DeleteTeam(teamId);
+        return response ? NoContent() : NotFound("Team not found!");
     }
 }

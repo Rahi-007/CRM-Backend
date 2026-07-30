@@ -22,7 +22,7 @@ public class UserController : ControllerBase
 
     // Get: api/v1/user/{userId} => Read a user
     [HttpGet("{userId:guid}")]
-    public async Task<IActionResult> GetCategory(Guid userId)
+    public async Task<IActionResult> GetUser(Guid userId)
     {
         UserResDto? response = await _userService.GetUserById(userId);
         return response == null ? NotFound("User not found!") : Ok(response);

@@ -10,7 +10,7 @@ public class CreateClientDto
 public class ClientResDto
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
     public string? LastName { get; set; } = string.Empty;
     public required string Phone { get; set; }
     public string? Address { get; set; } = string.Empty;
@@ -29,4 +29,5 @@ public class SelectClientRes
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
+    public required string Phone { get; set; }
 };

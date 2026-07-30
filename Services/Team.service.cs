@@ -14,7 +14,7 @@ public class TeamService : ITeamService
         _appDbContext = appDbContext;
     }
 
-    public async Task<List<TeamResDto>> GetAllTeams(string? search)
+    public async Task<List<TeamResDto>> GetAllTeams()
     {
         var query = _appDbContext.Teams
             .Include(t => t.TeamLeader)
@@ -22,16 +22,6 @@ public class TeamService : ITeamService
             .Include(t => t.CreatedBy)
             .Include(t => t.UpdatedBy)
             .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            search = search.Trim();
-            query = query.Where(t =>
-                EF.Functions.ILike(t.Name, $"%{search}%") ||
-                EF.Functions.ILike(t.TeamLeader.FirstName, $"%{search}%") ||
-                EF.Functions.ILike(t.TeamLeader.LastName!, $"%{search}%")
-            );
-        }
 
         var teams = await query
             .OrderByDescending(t => t.CreatedAt)
@@ -67,8 +57,8 @@ public class TeamService : ITeamService
         if (isAlreadyLeader) throw new Exception("This user is already a team leader.");
 
         User leader = await _appDbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == createData.TeamLeaderId && u.TeamId == null)
-            ?? throw new Exception("User already belongs to a team.");
+            .FirstOrDefaultAsync(u => u.Id == createData.TeamLeaderId)
+            ?? throw new Exception("User not found.");
 
         Team newTeam = _mapper.Map<Team>(createData);
         newTeam.CreatedById = _currentUser.UserId;
@@ -77,8 +67,10 @@ public class TeamService : ITeamService
         await _appDbContext.SaveChangesAsync();
 
         leader.TeamId = newTeam.Id;
-        await _appDbContext.SaveChangesAsync();
+        leader.UpdatedById = _currentUser.UserId;
+        leader.UpdatedAt = DateTime.UtcNow;
 
+        await _appDbContext.SaveChangesAsync();
         return newTeam.Id;
     }
 
@@ -98,6 +90,34 @@ public class TeamService : ITeamService
                 throw new Exception("Name already exists.");
         }
 
+
+        bool isAlreadyLeader = await _appDbContext.Teams
+            .AnyAsync(t => t.TeamLeaderId == updateData.TeamLeaderId && t.Id != id);
+
+        if (isAlreadyLeader)
+            throw new Exception("This user is already a team leader.");
+
+        User leader = await _appDbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == updateData.TeamLeaderId)
+            ?? throw new Exception("User not found.");
+
+        if (team.TeamLeaderId != updateData.TeamLeaderId)
+        {
+            var oldLeader = await _appDbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == team.TeamLeaderId);
+
+            if (oldLeader != null)
+            {
+                oldLeader.TeamId = null;
+                oldLeader.UpdatedById = _currentUser.UserId;
+                oldLeader.UpdatedAt = DateTime.UtcNow;
+            }
+
+            leader.TeamId = id;
+            leader.UpdatedById = _currentUser.UserId;
+            leader.UpdatedAt = DateTime.UtcNow;
+        }
+
         _mapper.Map(updateData, team);
         team.UpdatedById = _currentUser.UserId;
         team.UpdatedAt = DateTime.UtcNow;
@@ -106,12 +126,17 @@ public class TeamService : ITeamService
         return true;
     }
 
-
     public async Task<bool> DeleteTeam(int id)
     {
-        Team? team = await _appDbContext.Teams.FirstOrDefaultAsync(c => c.Id == id);
+        Team? team = await _appDbContext.Teams
+            .Include(t => t.Members)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
-        if (team == null) return false;
+        if (team == null)
+            return false;
+
+        if (team.Members.Any())
+            throw new Exception("Cannot delete a team because it has members.");
 
         _appDbContext.Teams.Remove(team);
         await _appDbContext.SaveChangesAsync();

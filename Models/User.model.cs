@@ -10,6 +10,4 @@ public class User : BaseEntity<Guid>
     public Team? Team { get; set; } = null;
     public string? RFId { get; set; } = string.Empty;
     public required string Password { get; set; }
-    public User CreatedBy { get; set; } = null!;
-    public User? UpdatedBy { get; set; }
 };

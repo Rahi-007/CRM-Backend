@@ -4,7 +4,6 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     public DbSet<User> Users { get; set; }
-    public DbSet<Category> Categories { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Client> Clients { get; set; }
 
