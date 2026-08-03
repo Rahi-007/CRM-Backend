@@ -41,6 +41,7 @@ public class UserResDto
     public DateOnly? DateOfBirth { get; set; }
     public Gender Gender { get; set; }
     public string? RFId { get; set; } = string.Empty;
+    public ICollection<ProjectRes> AssignedProjects { get; set; } = [];
     public UserRes CreatedBy { get; set; } = null!;
     public UserRes? UpdatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -51,7 +52,11 @@ public class UserResDto
         public int Id { get; set; }
         public string Name { get; set; } = null!;
     }
-
+    public class ProjectRes
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+    }
     public class UserRes
     {
         public Guid Id { get; set; }

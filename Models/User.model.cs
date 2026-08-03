@@ -10,4 +10,5 @@ public class User : BaseEntity<Guid>
     public Team? Team { get; set; } = null;
     public string? RFId { get; set; } = string.Empty;
     public required string Password { get; set; }
+    public ICollection<Project> AssignedProjects { get; set; } = [];
 };

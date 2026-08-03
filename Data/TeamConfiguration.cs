@@ -12,15 +12,15 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasOne(u => u.CreatedBy)
+            .HasOne(t => t.CreatedBy)
             .WithMany()
-            .HasForeignKey(u => u.CreatedById)
+            .HasForeignKey(t => t.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasOne(u => u.UpdatedBy)
+            .HasOne(t => t.UpdatedBy)
             .WithMany()
-            .HasForeignKey(u => u.UpdatedById)
+            .HasForeignKey(t => t.UpdatedById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

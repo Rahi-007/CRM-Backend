@@ -7,9 +7,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder
             .HasOne(u => u.Team)
-            .WithMany(t => t.Members)
-            .HasForeignKey(u => u.TeamId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .WithMany(u => u.Members)
+            .HasForeignKey(u => u.TeamId);
 
         builder
             .HasOne(u => u.CreatedBy)

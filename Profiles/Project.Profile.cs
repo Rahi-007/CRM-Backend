@@ -1,11 +1,13 @@
 using AutoMapper;
 
-public class ClientProfile : Profile
+public class ProjectProfile : Profile
 {
-    public ClientProfile()
+    public ProjectProfile()
     {
-        CreateMap<CreateClientDto, Client>();
-        CreateMap<User, ClientResDto.UserRes>()
+        CreateMap<CreateProjectDto, Project>();
+        CreateMap<Project, ProjectResDto>();
+        CreateMap<Project, SelectProjectRes>();
+        CreateMap<User, ProjectResDto.UserRes>()
             .ForMember(
                 d => d.Name,
                 o => o.MapFrom(s =>
@@ -13,14 +15,13 @@ public class ClientProfile : Profile
                         ? s.FirstName
                         : $"{s.FirstName} {s.LastName}")
             );
-        CreateMap<Client, ClientResDto>();
-        CreateMap<Project, ClientResDto.ProjectRes>();
-        CreateMap<Client, SelectClientRes>()
+        CreateMap<Client, ProjectResDto.ClientRes>()
             .ForMember(
                 d => d.Name,
                 o => o.MapFrom(s =>
                     string.IsNullOrWhiteSpace(s.LastName)
                         ? s.FirstName
-                        : $"{s.FirstName} {s.LastName}"));
+                        : $"{s.FirstName} {s.LastName}")
+            );
     }
 }

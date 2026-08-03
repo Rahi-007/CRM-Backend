@@ -132,11 +132,13 @@ public class TeamService : ITeamService
             .Include(t => t.Members)
             .FirstOrDefaultAsync(t => t.Id == id);
 
-        if (team == null)
-            return false;
-
-        if (team.Members.Any())
-            throw new Exception("Cannot delete a team because it has members.");
+        if (team == null) return false;
+        foreach (var member in team.Members)
+        {
+            member.TeamId = null;
+            member.UpdatedById = _currentUser.UserId;
+            member.UpdatedAt = DateTime.UtcNow;
+        }
 
         _appDbContext.Teams.Remove(team);
         await _appDbContext.SaveChangesAsync();

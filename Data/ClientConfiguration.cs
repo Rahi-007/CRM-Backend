@@ -6,15 +6,15 @@ public class ClientConfiguration : IEntityTypeConfiguration<Client>
     public void Configure(EntityTypeBuilder<Client> builder)
     {
         builder
-            .HasOne(u => u.CreatedBy)
+            .HasOne(c => c.CreatedBy)
             .WithMany()
-            .HasForeignKey(u => u.CreatedById)
+            .HasForeignKey(c => c.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasOne(u => u.UpdatedBy)
+            .HasOne(c => c.UpdatedBy)
             .WithMany()
-            .HasForeignKey(u => u.UpdatedById)
+            .HasForeignKey(c => c.UpdatedById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
