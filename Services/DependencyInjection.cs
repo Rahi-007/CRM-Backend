@@ -9,6 +9,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITeamService, TeamService>();
+        services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IClientService, ClientService>();
         services.AddAutoMapper(typeof(Program));
         services.AddProblemDetails();
