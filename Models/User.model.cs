@@ -8,6 +8,8 @@ public class User : BaseEntity<Guid>
     public Gender Gender { get; set; }
     public int? TeamId { get; set; }
     public Team? Team { get; set; } = null;
+    public int? RoleId { get; set; }
+    public Role? Role { get; set; } = null;
     public string? RFId { get; set; } = string.Empty;
     public required string Password { get; set; }
     public ICollection<Project> AssignedProjects { get; set; } = [];

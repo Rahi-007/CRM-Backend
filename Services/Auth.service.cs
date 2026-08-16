@@ -19,18 +19,20 @@ public class AuthService : IAuthService
 
     public async Task<LoginResDto> UserLogin(LoginDto userData)
     {
-        var user = await _appDbContext.Users
-        .Include(x => x.Team)
-        .Include(x => x.CreatedBy)
-        .Include(x => x.UpdatedBy)
-        .FirstOrDefaultAsync(x => x.Phone == userData.Phone);
+        User? user = await _appDbContext.Users
+            .Include(x => x.Team)
+            .Include(x => x.Role!).ThenInclude(x => x.Permissions)
+            .Include(x => x.CreatedBy)
+            .Include(x => x.UpdatedBy)
+            .FirstOrDefaultAsync(x => x.Phone == userData.Phone);
 
         if (user is null)
             throw new Exception("Invalid phone or password.");
 
         bool isPasswordValid = BCrypt.Net.BCrypt.Verify(
             userData.Password,
-            user.Password);
+            user.Password
+        );
 
         if (!isPasswordValid)
             throw new Exception("Invalid phone or password.");
@@ -40,7 +42,8 @@ public class AuthService : IAuthService
         return new LoginResDto
         {
             User = _mapper.Map<UserResDto>(user),
-            AccessToken = accessToken
+            AccessToken = accessToken,
+            Permissions = user.Role?.Permissions.ToList() ?? []
         };
     }
 

@@ -7,6 +7,7 @@ public class CreateUserDto
     public DateOnly? DateOfBirth { get; set; }
     public Gender Gender { get; set; }
     public int? TeamId { get; set; } = null;
+    public int? RoleId { get; set; } = null;
     public string? RFId { get; set; } = string.Empty;
     public required string Password { get; set; }
 };
@@ -21,6 +22,7 @@ public class UpdateUserDto
     public DateOnly? DateOfBirth { get; set; }
     public Gender? Gender { get; set; }
     public int? TeamId { get; set; }
+    public int? RoleId { get; set; }
     public string? RFId { get; set; }
 }
 
@@ -38,6 +40,7 @@ public class UserResDto
     public string Phone { get; set; } = null!;
     public string? Address { get; set; } = string.Empty;
     public TeamRes? Team { get; set; } = null;
+    public RoleRes? Role { get; set; } = null;
     public DateOnly? DateOfBirth { get; set; }
     public Gender Gender { get; set; }
     public string? RFId { get; set; } = string.Empty;
@@ -48,6 +51,11 @@ public class UserResDto
     public DateTime? UpdatedAt { get; set; }
 
     public class TeamRes
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+    }
+    public class RoleRes
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;

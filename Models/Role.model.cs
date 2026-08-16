@@ -1,6 +1,6 @@
-// public class Role : BaseEntity<Guid>
-// {
-//     public required string Name { get; set; }
-//     public string? Narration { get; set; } = string.Empty;
-//     // public ICollection<PermissionKey> Members{ get; set; } = [];
-// };
+public class Role : BaseEntity<int>
+{
+    public string Name { get; set; } = null!;
+    public string? Narration { get; set; }
+    public ICollection<Permission> Permissions { get; set; } = new List<Permission>();
+}

@@ -19,8 +19,8 @@ public class UserProfile : Profile
                     : s.FirstName + " " + s.LastName)
         );
         CreateMap<Team, UserResDto.TeamRes>();
+        CreateMap<Role, UserResDto.RoleRes>();
         CreateMap<Project, UserResDto.ProjectRes>();
-
         CreateMap<User, UserResDto.UserRes>()
             .ForMember(
                 d => d.Name,

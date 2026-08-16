@@ -18,6 +18,7 @@ public class UserService : IUserService
     {
         var query = _appDbContext.Users
             .Include(u => u.Team)
+            .Include(u => u.Role)
             .Include(u => u.CreatedBy)
             .Include(u => u.UpdatedBy)
             .OrderByDescending(u => u.CreatedAt)
@@ -40,6 +41,7 @@ public class UserService : IUserService
     {
         User? user = await _appDbContext.Users
             .Include(u => u.Team)
+            .Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         return user == null ? null : _mapper.Map<UserResDto>(user);
