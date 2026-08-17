@@ -41,7 +41,7 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> CreateProject(CreateProjectDto projectData)
     {
         int projectId = await _projectService.CreateProject(projectData);
-        return Created($"/api/v1/user/{projectId}", projectId);
+        return Created($"/api/v1/project/{projectId}", projectId);
     }
 
     // Update: api/v1/project/{projectId} => Update a project

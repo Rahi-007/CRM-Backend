@@ -2,3 +2,9 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 
 dotnet run -- seed
+
+SELECT setval(
+    pg_get_serial_sequence('"Roles"', 'Id'),
+    (SELECT MAX("Id") FROM "Roles"),
+    true
+);
