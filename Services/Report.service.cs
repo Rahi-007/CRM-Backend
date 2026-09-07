@@ -119,4 +119,78 @@ public class ReportService : IReportService
 
         return reports;
     }
+
+    public async Task<List<PerformerReportDto>> GetPerformerReport(
+    PerformerReportFilterDto filter)
+    {
+        var query = _context.Projects
+            .AsNoTracking()
+            .Where(p =>
+                p.AssignedTo.TeamId == filter.TeamId &&
+                p.SubmitDate >= filter.FromDate &&
+                p.SubmitDate <= filter.ToDate &&
+                (!filter.ClientId.HasValue ||
+                 p.ClientId == filter.ClientId.Value)
+            );
+
+        List<PerformerReportDto> report = await query
+            .GroupBy(p => new
+            {
+                DesignerId = p.AssignedToId,
+                DesignerName = p.AssignedTo.FirstName +
+                               " " +
+                               (p.AssignedTo.LastName ?? ""),
+                DesignerPhone = p.AssignedTo.Phone,
+            })
+            .Select(g => new PerformerReportDto
+            {
+                DesignerId = g.Key.DesignerId,
+                DesignerName = g.Key.DesignerName.Trim(),
+                DesignerPhone = g.Key.DesignerPhone.Trim(),
+                TotalQuantity = g.Sum(p => p.Quantity),
+                ApprovedQuantity = g
+                    .Where(p =>
+                        p.Status == ProjectStatus.BM_Approved ||
+                        p.Status == ProjectStatus.HoM_Approved
+                    )
+                    .Sum(p => p.Quantity),
+                SubmittedQuantity = g
+                    .Where(p =>
+                        p.Status == ProjectStatus.Brief_Submitted
+                    )
+                    .Sum(p => p.Quantity),
+                InReviewQuantity = g
+                    .Where(p =>
+                        p.Status == ProjectStatus.In_Review
+                    )
+                    .Sum(p => p.Quantity),
+                TotalProjects = g.Count(),
+                ApprovalPercentage =
+                    g.Sum(p => p.Quantity) == 0
+                        ? 0
+                        : Math.Round(
+                            (decimal)g
+                                .Where(p =>
+                                    p.Status == ProjectStatus.BM_Approved ||
+                                    p.Status == ProjectStatus.HoM_Approved
+                                )
+                                .Sum(p => p.Quantity)
+                            / g.Sum(p => p.Quantity) * 100,
+                            2
+                        ),
+                AverageQuantity =
+                    g.Count() == 0
+                        ? 0
+                        : Math.Round(
+                            (decimal)g.Sum(p => p.Quantity) / g.Count(),
+                            2
+                        ),
+
+                WorkingHours = 0
+            })
+            .OrderByDescending(x => x.TotalQuantity)
+            .ToListAsync();
+
+        return report;
+    }
 }

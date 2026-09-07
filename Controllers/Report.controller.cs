@@ -39,4 +39,13 @@ public class ReportController : ControllerBase
         var result = await _reportService.GetTeamReport(filter);
         return Ok(result);
     }
+
+    // Get: api/v1/reports/performer ? => top performer report
+    [HttpGet("performer")]
+    public async Task<IActionResult> GetPerformerReport(
+        [FromQuery] PerformerReportFilterDto filter)
+    {
+        var result = await _reportService.GetPerformerReport(filter);
+        return Ok(result);
+    }
 }

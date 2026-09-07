@@ -62,3 +62,26 @@ public class TeamReportFilterDto
     public DateOnly FromDate { get; set; }
     public DateOnly ToDate { get; set; }
 }
+
+public class PerformerReportDto
+{
+    public Guid DesignerId { get; set; }
+    public string DesignerName { get; set; } = string.Empty;
+    public string DesignerPhone { get; set; } = string.Empty;
+    public int TotalQuantity { get; set; }
+    public int ApprovedQuantity { get; set; }
+    public int SubmittedQuantity { get; set; }
+    public int InReviewQuantity { get; set; }
+    public int TotalProjects { get; set; }
+    public decimal ApprovalPercentage { get; set; }
+    public decimal AverageQuantity { get; set; }
+    public int WorkingHours { get; set; } = 0;
+}
+
+public class PerformerReportFilterDto
+{
+    public int TeamId { get; set; }
+    public DateOnly FromDate { get; set; }
+    public DateOnly ToDate { get; set; }
+    public Guid? ClientId { get; set; }
+}
