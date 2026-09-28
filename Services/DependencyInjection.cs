@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddAutoMapper(typeof(Program));
         services.AddProblemDetails();
