@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 public class UserController : ControllerBase
 {
     public readonly IUserService _userService;
-    public UserController(IUserService userService)
+    public readonly IUserSessionService _userSessionService;
+    public UserController(IUserService userService, IUserSessionService userSessionService)
     {
         _userService = userService;
+        _userSessionService = userSessionService;
     }
 
     // Get: api/v1/user => Read all user
@@ -17,6 +19,15 @@ public class UserController : ControllerBase
     public async Task<IActionResult> LoadUsers()
     {
         List<UserResDto> response = await _userService.GetAllUsers();
+        return Ok(response);
+    }
+
+    // Get: api/v1/user/online => Read all active users
+    [HttpGet("online")]
+    public async Task<IActionResult> GetOnlineUsers()
+    {
+        var response = await _userSessionService.GetOnlineUsers();
+
         return Ok(response);
     }
 
