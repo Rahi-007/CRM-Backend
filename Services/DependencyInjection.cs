@@ -15,6 +15,8 @@ public static class DependencyInjection
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IAiReportDataService, AiReportDataService>();
+        services.AddHttpClient<IAiReportService, AiReportService>();
         services.AddSignalR();
         services.AddAutoMapper(typeof(Program));
         services.AddProblemDetails();
