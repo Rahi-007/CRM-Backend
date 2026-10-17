@@ -8,3 +8,7 @@ SELECT setval(
     (SELECT MAX("Id") FROM "Roles"),
     true
 );
+
+dotnet user-secrets init
+dotnet user-secrets set "OpenAI:ApiKey" "YOUR_API_KEY"
+dotnet user-secrets set "OpenAI:Model" "gpt-6-astra"

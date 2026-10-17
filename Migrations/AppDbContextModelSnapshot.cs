@@ -321,7 +321,6 @@ namespace Ecommerce.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ConnectionId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("EndedAt")
@@ -330,10 +329,10 @@ namespace Ecommerce.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastSeenAt")
+                    b.Property<DateTime?>("LastSeenAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("StartedAt")
+                    b.Property<DateTime?>("StartedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")

@@ -22,7 +22,7 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    // Get: api/v1/user/online => Read all active users
+    // Get: api/v1/user/online => Read all online users
     [HttpGet("online")]
     public async Task<IActionResult> GetOnlineUsers()
     {

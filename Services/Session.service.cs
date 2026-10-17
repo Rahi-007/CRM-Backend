@@ -18,43 +18,45 @@ public class UserSessionService : IUserSessionService
             .Where(x =>
                 x.IsActive &&
                 x.LastSeenAt >= timeout)
-            .GroupBy(x => new
-            {
-                x.UserId,
-                x.User.FirstName,
-                x.User.LastName
-            })
             .Select(x => new OnlineUserResDto
             {
-                Id = x.Key.UserId,
+                Id = x.UserId,
 
-                FullName = string.IsNullOrEmpty(x.Key.LastName)
-                    ? x.Key.FirstName
-                    : x.Key.FirstName + " " + x.Key.LastName,
+                FullName = string.IsNullOrEmpty(x.User.LastName)
+                    ? x.User.FirstName
+                    : x.User.FirstName + " " + x.User.LastName,
 
-                LastSeenAt = x.Max(s => s.LastSeenAt)
+                LastSeenAt = x.StartedAt!.Value
             })
             .OrderBy(x => x.FullName)
             .ToListAsync();
     }
 
     public async Task CreateSessionAsync(
-        Guid userId,
-        string connectionId)
+    Guid userId,
+    string connectionId)
     {
         var now = DateTime.UtcNow;
 
-        var session = new UserSession
-        {
-            Id = Guid.NewGuid(),
-            UserId = userId,
-            ConnectionId = connectionId,
-            StartedAt = now,
-            LastSeenAt = now,
-            IsActive = true
-        };
+        var session = await _appDbContext.UserSessions
+            .FirstOrDefaultAsync(x => x.UserId == userId);
 
-        _appDbContext.UserSessions.Add(session);
+        if (session == null)
+        {
+            session = new UserSession
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId
+            };
+
+            _appDbContext.UserSessions.Add(session);
+        }
+
+        session.ConnectionId = connectionId;
+        session.StartedAt = now;
+        session.LastSeenAt = now;
+        session.EndedAt = null;
+        session.IsActive = true;
 
         await _appDbContext.SaveChangesAsync();
     }
@@ -84,11 +86,10 @@ public class UserSessionService : IUserSessionService
         if (session == null)
             return;
 
-        var now = DateTime.UtcNow;
-
         session.IsActive = false;
-        session.EndedAt = now;
-        session.LastSeenAt = now;
+        session.EndedAt = DateTime.UtcNow;
+        session.LastSeenAt = DateTime.UtcNow;
+        session.ConnectionId = null;
 
         await _appDbContext.SaveChangesAsync();
     }
