@@ -21,8 +21,6 @@ public sealed class AiReportDataService : IAiReportDataService
                 "From date cannot be after To date.");
         }
 
-        // DateOnly filter-কে timestamp range-এ রূপান্তর করা হয়েছে।
-        // To date-এর পরের দিনের শুরু exclusive রাখা হয়েছে।
         var projectsQuery = _context.Projects
         .AsNoTracking()
         .Where(p =>

@@ -135,6 +135,12 @@ public static class PermissionSeeder
                 Module = "Roles",
                 Action = "Delete"
             },
+            new()
+            {
+                Name = "Reports.View",
+                Module = "Reports",
+                Action = "View"
+            },
 
             // System Settings
             new()

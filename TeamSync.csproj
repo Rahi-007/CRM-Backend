@@ -22,4 +22,11 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="CRM.Tests/**/*.cs" />
+    <Content Remove="CRM.Tests/**" />
+    <EmbeddedResource Remove="CRM.Tests/**" />
+    <None Remove="CRM.Tests/**" />
+  </ItemGroup>
+
 </Project>

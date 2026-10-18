@@ -9,7 +9,6 @@ SELECT setval(
     true
 );
 
-
 test cmd:
 dotnet new xunit -n CRM.Tests
 dotnet new sln -n CRM
